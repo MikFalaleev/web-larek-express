@@ -1,17 +1,33 @@
+/* eslint-disable no-console */
+import path from 'path';
 import { config } from 'dotenv';
 import express from 'express';
+import mongoose from 'mongoose';
 import cors from 'cors';
+import { errors } from 'celebrate';
+import productRouter from './routes/product';
+import orderRouter from './routes/order';
+import errorHandler from './middlewares/error-handler';
 
 config();
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, DB_ADDRESS = 'mongodb://127.0.0.1:27017/weblarek' } = process.env;
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Сервер запущен на порту ${PORT}`);
-});
+app.use('/product', productRouter);
+app.use('/order', orderRouter);
+
+app.use(errors());
+app.use(errorHandler);
+
+mongoose.connect(DB_ADDRESS)
+  .then(() => {
+    console.log('Подключено к MongoDB');
+    app.listen(PORT, () => console.log(`Сервер запущен на порту ${PORT}`));
+  })
+  .catch((err) => console.error('Ошибка подключения к MongoDB:', err));
