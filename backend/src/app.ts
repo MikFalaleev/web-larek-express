@@ -8,6 +8,7 @@ import { errors } from 'celebrate';
 import productRouter from './routes/product';
 import orderRouter from './routes/order';
 import errorHandler from './middlewares/error-handler';
+import { requestLogger, errorLogger } from './middlewares/logger';
 import NotFoundError from './errors/not-found-error';
 
 config();
@@ -20,11 +21,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(requestLogger);
+
 app.use('/product', productRouter);
 app.use('/order', orderRouter);
 
 app.use((_req, _res, next) => next(new NotFoundError('Маршрут не найден')));
 
+app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
 
