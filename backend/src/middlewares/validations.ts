@@ -2,7 +2,7 @@ import { celebrate, Joi, Segments } from 'celebrate';
 
 const objIdPattern = /^[0-9a-fA-F]{24}$/;
 
-// проверка id из параметров URL (понадобится для PATCH и DELETE)
+// проверка id товара из параметров URL (PATCH и DELETE)
 export const validateObjId = celebrate({
   [Segments.PARAMS]: Joi.object().keys({
     productId: Joi.string().pattern(objIdPattern).required(),
@@ -46,5 +46,22 @@ export const validateOrderBody = celebrate({
     address: Joi.string().required(),
     total: Joi.number().required(),
     items: Joi.array().items(Joi.string().pattern(objIdPattern)).min(1).required(),
+  }),
+});
+
+// регистрация пользователя
+export const validateRegisterBody = celebrate({
+  [Segments.BODY]: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
+  }),
+});
+
+// вход пользователя
+export const validateLoginBody = celebrate({
+  [Segments.BODY]: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
   }),
 });

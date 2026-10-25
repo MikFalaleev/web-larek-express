@@ -21,6 +21,7 @@
   "rules": {
     "no-shadow": "off",
     "@typescript-eslint/no-shadow": "warn",
+    "no-console": ["error", { "allow": ["log", "error"] }],
     "import/extensions": [
       "error",
       "ignorePackages",
