@@ -11,6 +11,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 МБ
 const ALLOWED_TYPES: Record<string, string> = {
   'image/png': '.png',
   'image/jpeg': '.jpg',
+  'image/jpg': '.jpg',
   'image/gif': '.gif',
   'image/svg+xml': '.svg',
 };

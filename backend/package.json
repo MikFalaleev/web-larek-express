@@ -4,7 +4,7 @@
   "description": "Бэкенд интернет-магазина Web-ларёк: каталог, заказы, авторизация и админка товаров (Express, TypeScript, MongoDB)",
   "main": "src/app.ts",
   "scripts": {
-    "lint": "npx eslint src/**/*.ts",
+    "lint": "eslint \"src/**/*.ts\"",
     "build": "tsc",
     "dev": "ts-node-dev --respawn src/app.ts",
     "start": "ts-node .",

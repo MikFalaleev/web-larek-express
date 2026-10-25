@@ -2,7 +2,7 @@ import {
   CookieOptions, NextFunction, Request, Response,
 } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { Error as MongooseError, isValidObjectId } from 'mongoose';
+import { Error as MongooseError } from 'mongoose';
 import ms from 'ms';
 import User, { UserDocument } from '../models/user';
 import { AUTH_REFRESH_TOKEN_EXPIRY, AUTH_REFRESH_TOKEN_SECRET } from '../config';
@@ -46,12 +46,12 @@ const sendAuthResponse = (
 
 const verifyRefreshToken = (token: unknown, ignoreExpiration = false) => {
   if (typeof token !== 'string') {
-    throw new UnauthorizedError('Не валидный токен');
+    return null;
   }
   try {
     return jwt.verify(token, AUTH_REFRESH_TOKEN_SECRET, { ignoreExpiration }) as JwtPayload;
   } catch (err) {
-    throw new UnauthorizedError('Не валидный токен');
+    return null;
   }
 };
 
@@ -87,6 +87,9 @@ export const refreshAccessToken = async (req: Request, res: Response, next: Next
   try {
     const oldToken = req.cookies[REFRESH_COOKIE_NAME];
     const payload = verifyRefreshToken(oldToken);
+    if (!payload) {
+      return next(new UnauthorizedError('Не валидный токен'));
+    }
 
     // забираем пользователя и сразу удаляем использованный refresh-токен
     const user = await User.findOneAndUpdate(
@@ -108,9 +111,8 @@ export const logout = async (req: Request, res: Response, next: NextFunction) =>
   try {
     const oldToken = req.cookies[REFRESH_COOKIE_NAME];
     const payload = verifyRefreshToken(oldToken, true);
-
-    if (!isValidObjectId(payload._id)) {
-      throw new BadRequestError('Передан не валидный ID пользователя');
+    if (!payload) {
+      return next(new UnauthorizedError('Не валидный токен'));
     }
 
     const user = await User.findByIdAndUpdate(payload._id, {
