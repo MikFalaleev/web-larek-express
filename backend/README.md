@@ -57,26 +57,27 @@ docker run -d --name mongo -p 27017:27017 mongo
 
 | Метод | Путь | Доступ | Описание | Успех | Ошибки |
 |---|---|---|---|---|---|
-| GET | `/product` | открыт | список товаров | 200 `{ items, total }` | — |
-| POST | `/product` | токен | создание товара | 200 товар | 400, 401, 409 |
-| PATCH | `/product/:productId` | токен | обновление товара | 200 товар | 400, 401, 404, 409 |
-| DELETE | `/product/:productId` | токен | удаление товара и его картинки | 200 удалённый товар | 400, 401, 404 |
-| POST | `/order` | открыт | оформление заказа | 200 `{ id, total }` | 400 |
-| POST | `/upload` | токен | загрузка картинки (поле `file`) | 200 `{ fileName, originalName }` | 400, 401 |
-| POST | `/auth/register` | открыт | регистрация | 201 `{ user, success, accessToken }` | 400, 409 |
-| POST | `/auth/login` | открыт | вход | 200 `{ user, success, accessToken }` | 400, 401 |
-| GET | `/auth/token` | refresh-cookie | обновление пары токенов | 200 `{ user, success, accessToken }` | 401 |
-| GET | `/auth/logout` | refresh-cookie | выход, сброс refresh-токена | 200 `{ success }` | 400, 404 |
-| GET | `/auth/user` | токен | текущий пользователь | 200 `{ user, success }` | 401, 404 |
+| GET | `/product` | открыт | список товаров | 200 `{ items, total }` | 500 |
+| POST | `/product` | токен | создание товара | 201 товар | 400, 401, 409, 500 |
+| PATCH | `/product/:productId` | токен | обновление товара | 200 товар | 400, 401, 404, 409, 500 |
+| DELETE | `/product/:productId` | токен | удаление товара и его картинки | 200 удалённый товар | 400, 401, 404, 500 |
+| POST | `/order` | открыт | оформление заказа | 200 `{ id, total }` | 400, 500 |
+| POST | `/upload` | токен | загрузка картинки во временную папку (поле `file`) | 200 `{ fileName, originalName }` | 400, 401, 500 |
+| POST | `/auth/register` | открыт | регистрация | 201 `{ user, success, accessToken }` | 400, 409, 500 |
+| POST | `/auth/login` | открыт | вход | 200 `{ user, success, accessToken }` | 400, 401, 500 |
+| GET | `/auth/token` | refresh-cookie | обновление пары токенов | 200 `{ user, success, accessToken }` | 401, 404, 500 |
+| GET | `/auth/logout` | refresh-cookie | выход, удаление refresh-токена | 200 `{ success }` | 401, 404, 500 |
+| GET | `/auth/user` | токен | текущий пользователь | 200 `{ user, success }` | 401, 404, 500 |
 
 Refresh-токен хранится в httpOnly-cookie и обновляется при каждом `/auth/token`
 (старый токен перестаёт действовать).
 
 ### Формат ошибок
 
-- Ошибки валидации (celebrate): `{ statusCode, error, message: "Validation failed", validation }`
+- Ошибки валидации запроса (celebrate, включая невалидный `productId`):
+  `{ statusCode, error, message: "Validation failed", validation }`
 - Остальные ошибки: `{ "message": "..." }`, например:
-  - `400` — `Передан не валидный ID товара`, `Недопустимый тип файла. Разрешены png, jpg, gif и svg`
+  - `400` — `Недопустимый тип файла. Разрешены png, jpg, gif и svg`
   - `401` — `Необходима авторизация`
   - `404` — `Нет товара по заданному id`, `Маршрут не найден`
   - `409` — `Товар с таким заголовком уже существует`, `Пользователь с таким email уже существует`

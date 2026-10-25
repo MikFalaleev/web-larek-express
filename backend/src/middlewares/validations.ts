@@ -1,17 +1,13 @@
-import { NextFunction, Request, Response } from 'express';
 import { celebrate, Joi, Segments } from 'celebrate';
-import { isValidObjectId } from 'mongoose';
-import BadRequestError from '../errors/bad-request-error';
 
 const objIdPattern = /^[0-9a-fA-F]{24}$/;
 
-/// проверка id товара из параметров URL (PATCH и DELETE)
-export const validateObjId = (req: Request, _res: Response, next: NextFunction) => {
-  if (!isValidObjectId(req.params.productId)) {
-    return next(new BadRequestError('Передан не валидный ID товара'));
-  }
-  return next();
-};
+// проверка id товара из параметров URL (PATCH и DELETE)
+export const validateObjId = celebrate({
+  [Segments.PARAMS]: Joi.object().keys({
+    productId: Joi.string().pattern(objIdPattern).required(),
+  }),
+});
 
 // создание товара
 export const validateProductBody = celebrate({

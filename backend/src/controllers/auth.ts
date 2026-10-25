@@ -97,6 +97,11 @@ export const refreshAccessToken = async (req: Request, res: Response, next: Next
       { $pull: { tokens: { token: oldToken } } },
     );
     if (!user) {
+      // токена у пользователя нет: либо самого пользователя уже нет в базе, либо токен отозван
+      const userExists = await User.exists({ _id: payload._id });
+      if (!userExists) {
+        throw new NotFoundError('Пользователь по заданному id отсутствует в базе');
+      }
       throw new UnauthorizedError('Не валидный токен');
     }
 
