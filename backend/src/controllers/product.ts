@@ -33,7 +33,7 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
     const product = await Product.create({
       title, image, category, description, price,
     });
-    return res.send(product);
+    return res.status(201).send(product);
   } catch (err) {
     return handleSaveError(err, next);
   }
