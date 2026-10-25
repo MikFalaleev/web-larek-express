@@ -1,7 +1,7 @@
 {
   "name": "weblarek_backend",
   "version": "1.0.0",
-  "description": "< Добавьте описание проекта в свободной форме >",
+  "description": "Бэкенд интернет-магазина Web-ларёк: каталог, заказы, авторизация и админка товаров (Express, TypeScript, MongoDB)",
   "main": "src/app.ts",
   "scripts": {
     "lint": "npx eslint src/**/*.ts",
@@ -10,7 +10,7 @@
     "start": "ts-node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "< Укажите здесь автора работы >",
+  "author": "MikFalaleev",
   "license": "ISC",
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
