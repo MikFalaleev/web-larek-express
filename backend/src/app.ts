@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import path from 'path';
-import { config } from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -11,9 +10,7 @@ import errorHandler from './middlewares/error-handler';
 import { requestLogger, errorLogger } from './middlewares/logger';
 import NotFoundError from './errors/not-found-error';
 
-config();
-
-const { PORT = 3000, DB_ADDRESS = 'mongodb://127.0.0.1:27017/weblarek' } = process.env;
+import { PORT, DB_ADDRESS } from './config';
 
 const app = express();
 
