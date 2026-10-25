@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { removeUploadedFile } from '../utils/files';
 
 export interface IProduct {
   title: string;
@@ -39,5 +40,17 @@ const productSchema = new mongoose.Schema<IProduct>(
   },
   { versionKey: false },
 );
+
+// после удаления товара чистим файл картинки (если ею не пользуется другой товар)
+productSchema.post('findOneAndDelete', async (doc) => {
+  if (!doc) {
+    return;
+  }
+  const { fileName } = doc.image;
+  const stillUsed = await mongoose.model('product').exists({ 'image.fileName': fileName });
+  if (!stillUsed) {
+    await removeUploadedFile(fileName);
+  }
+});
 
 export default mongoose.model<IProduct>('product', productSchema);

@@ -1,3 +1,4 @@
+import path from 'path';
 import { config } from 'dotenv';
 
 config();
@@ -11,3 +12,6 @@ export const AUTH_ACCESS_TOKEN_EXPIRY = process.env.AUTH_ACCESS_TOKEN_EXPIRY || 
 export const AUTH_REFRESH_TOKEN_EXPIRY = process.env.AUTH_REFRESH_TOKEN_EXPIRY || '7d';
 export const AUTH_ACCESS_TOKEN_SECRET = process.env.AUTH_ACCESS_TOKEN_SECRET || 'dev-access-secret';
 export const AUTH_REFRESH_TOKEN_SECRET = process.env.AUTH_REFRESH_TOKEN_SECRET || 'dev-refresh-secret';
+export const PUBLIC_DIR = path.join(__dirname, 'public');
+export const UPLOAD_DIR = path.join(PUBLIC_DIR, UPLOAD_PATH);
+export const TEMP_DIR = path.join(__dirname, '..', UPLOAD_PATH_TEMP);

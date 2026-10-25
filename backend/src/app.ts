@@ -8,9 +8,11 @@ import { errors } from 'celebrate';
 import productRouter from './routes/product';
 import orderRouter from './routes/order';
 import authRouter from './routes/auth';
+import uploadRouter from './routes/upload';
 import errorHandler from './middlewares/error-handler';
 import { requestLogger, errorLogger } from './middlewares/logger';
 import NotFoundError from './errors/not-found-error';
+import startTempCleanup from './utils/temp-cleanup';
 import { PORT, DB_ADDRESS, ORIGIN_ALLOW } from './config';
 
 const app = express();
@@ -25,6 +27,7 @@ app.use(requestLogger);
 app.use('/product', productRouter);
 app.use('/order', orderRouter);
 app.use('/auth', authRouter);
+app.use('/upload', uploadRouter);
 
 app.use((_req, _res, next) => next(new NotFoundError('Маршрут не найден')));
 
@@ -36,5 +39,6 @@ mongoose.connect(DB_ADDRESS)
   .then(() => {
     console.log('Подключено к MongoDB');
     app.listen(PORT, () => console.log(`Сервер запущен на порту ${PORT}`));
+    startTempCleanup();
   })
   .catch((err) => console.error('Ошибка подключения к MongoDB:', err));
